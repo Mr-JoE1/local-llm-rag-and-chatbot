@@ -11,5 +11,17 @@ Create privateCPT that ables to give correct answers in context of provided docu
 - Chroma DB : as data vector data base
 
 ## Install 
-- Install Ollama :  'curl -fsSL https://ollama.com/install.sh | sh'
-- 
+- Install Ollama :
+  ```bash
+      curl -fsSL https://ollama.com/install.sh | sh
+      # Download LLAMA3
+      ollama download llama3
+      ollama serve
+- Clone this repo
+- install requiements - use py venv is better
+- place ducoments inside data/ folder
+- run populate_database.py to creat chrome db from loaded documents
+- start the privateGPT backedn py running chatbot.py
+
+## TODO
+- LOAD CVS FILES 
