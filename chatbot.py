@@ -25,35 +25,36 @@ Answer the question based on the above context: {question}
 Please respond in the same language as the question ({language}).
 """
 MAX_INPUT_SIZE = 1000
-def query_rag(query_text: str):
 
+def query_rag(query_text: str):
     # Detect the language of the query
     lang = detect(query_text)
     if lang == "en":
-        language =  "English"
+        language = "English"
     elif lang == "ar":
         language = "Arabic"
     else:
         language = "English"
-    #print(language)
-    
+
     # Prepare the DB.
     embedding_function = get_embedding_function()
     db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
 
     # Search the DB.
     results = db.similarity_search_with_score(query_text, k=5)
+    print(f"Search results: {results}")
 
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text, language=language)
-    # print(prompt)
 
     model = Ollama(model="llama3")
     response_text = model.invoke(prompt)
 
     sources = [doc.metadata.get("id", None) for doc, _score in results]
-    formatted_response = f"Response: {response_text}\n\033[93mSources: {sources}\033[0m"
+    print(f"Sources: {sources}")
+
+    formatted_response = f"{response_text}\n\033[93mSources: {sources}\033[0m"
     return formatted_response
 
 def main():
@@ -72,7 +73,6 @@ def main():
             except UnicodeDecodeError as e:
                 print(f"\033[91mError: Invalid character encountered: {e}\033[0m")
                 print("Please enter your question again.")
-            
     except KeyboardInterrupt:
         print("\nExiting chat. Goodbye!")
 
